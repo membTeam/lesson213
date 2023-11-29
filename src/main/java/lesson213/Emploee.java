@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Emploee {
 
     private String id;
-    private String INN;
+    private String dataINN;
     private String firstName;
     private String lastName;
     private Integer department;
@@ -21,11 +21,11 @@ public class Emploee {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Emploee emploee = (Emploee) o;
-        return Objects.equals(INN, emploee.INN);
+        return Objects.equals(dataINN, emploee.dataINN);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(INN);
+        return Objects.hash(dataINN);
     }
 }

@@ -4,21 +4,27 @@ import lesson213.Emploee;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 public interface EmploeeRepository {
 
     void clearAll();
 
     Optional<Emploee> save(Emploee emploee);
-    Optional<Integer> maxSalary();
-    Optional<Integer> minSalary();
-    Optional<Integer> sumSalary();
+    int minSalary();
+    int sumSalary();
     Optional<List<Emploee>> findAll();
 
+
+    int size();
+    boolean existEmploee(String inn, String firstName, String lastName);
+    boolean existEmploee(Emploee emploee);
+
     Optional<Emploee> findById(String id);
-    Optional<Integer> maxSalary(int department);
-    Optional<Integer> sumSalary(int department);
+    int maxSalary(int department);
+    int maxSalary();
+    int sumSalary(int department);
     Optional<List<Emploee>> findAll(int department);
-    Optional<Integer> MinSalary(int department);
+    int minSalary(int department);
 
 }
