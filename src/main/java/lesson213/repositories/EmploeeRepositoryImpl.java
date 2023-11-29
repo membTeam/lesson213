@@ -1,6 +1,6 @@
 package lesson213.repositories;
 
-import lesson213.Emploee;
+import lesson213.models.Emploee;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -9,15 +9,27 @@ import java.util.stream.Collectors;
 @Repository
 public class EmploeeRepositoryImpl implements  EmploeeRepository {
     private static  int numINN = 50000;
-    private static String getINN() {
-        return  "6134" + numINN++ + "001";
+    private Long getINN() {
+        var lsEmploee = repo.values().stream().collect(Collectors.toList());
+        var max = getMaxINN(lsEmploee);
+
+        max = (max / 1000 + 1) * 1000 + 1;
+
+        //var strLong = "6134" + numINN++ + "001";
+        //Long.parseLong(strLong);
+
+        return max;
     }
     private Map<String,Emploee> repo = new HashMap<>();
 
     // ---------------------------------------------------
 
+    private static Long getMaxINN(List<Emploee> lsEmploee) {
+        return lsEmploee.stream().mapToLong(emploee -> emploee.getDataINN()).max().orElseThrow();
+    }
+
     @Override
-    public boolean existEmploee(String inn, String firstName, String lastName) {
+    public boolean existEmploee(Long inn, String firstName, String lastName) {
         return repo.values().stream()
                 .filter(emploee -> (emploee.getDataINN().equals(inn) &&
                         emploee.getFirstName().equals(firstName) &&
@@ -27,7 +39,11 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
 
     @Override
     public boolean existEmploee(Emploee emploee) {
-        return existEmploee(emploee.getDataINN(), emploee.getFirstName(), emploee.getLastName());
+        if (emploee.getId() == null) {
+            return false;
+        } else {
+            return existEmploee(emploee.getDataINN(), emploee.getFirstName(), emploee.getLastName());
+        }
     }
 
     @Override

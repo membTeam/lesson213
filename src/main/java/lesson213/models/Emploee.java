@@ -1,4 +1,4 @@
-package lesson213;
+package lesson213.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Emploee {
 
     private String id;
-    private String dataINN;
+    private Long dataINN;
     private String firstName;
     private String lastName;
     private Integer department;
@@ -24,8 +24,4 @@ public class Emploee {
         return Objects.equals(dataINN, emploee.dataINN);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(dataINN);
-    }
 }

@@ -1,10 +1,9 @@
 package lesson213.repositories;
 
-import lesson213.Emploee;
+import lesson213.models.Emploee;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 public interface EmploeeRepository {
 
@@ -17,7 +16,7 @@ public interface EmploeeRepository {
 
 
     int size();
-    boolean existEmploee(String inn, String firstName, String lastName);
+    boolean existEmploee(Long inn, String firstName, String lastName);
     boolean existEmploee(Emploee emploee);
 
     Optional<Emploee> findById(String id);

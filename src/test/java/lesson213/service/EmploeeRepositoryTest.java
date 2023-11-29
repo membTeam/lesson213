@@ -1,6 +1,6 @@
 package lesson213.service;
 
-import lesson213.Emploee;
+import lesson213.models.Emploee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,14 +26,14 @@ public class EmploeeRepositoryTest {
 
     @Test
     public void existEmploeeWithAllParameters() {
-        var exist = repo.existEmploee("613450000001", "Даниил", "Андрианов");
+        var exist = repo.existEmploee(613450000001L, "Даниил", "Андрианов");
 
         assertTrue(exist);
     }
 
     @Test
     public void existEmploeeWithEmploee() {
-        var emploee = new Emploee(null, "613450000001", "Даниил", "Андрианов", null, null );
+        var emploee = new Emploee(null, 613450000001L, "Даниил", "Андрианов", null, null );
         var exist = repo.existEmploee(emploee);
 
         assertTrue(exist);
@@ -41,19 +41,17 @@ public class EmploeeRepositoryTest {
 
     @Test
     public void saveWithNotExistEmploee() {
-        var emploee = new Emploee(null, "613450000010", "Даниил", "Андрианов", 1, 10000 );
+        var emploee = new Emploee(null, 613450000010L, "Даниил", "Андрианов", 1, 10000 );
 
         var resSave = repo.save(emploee);
-
         assertTrue(resSave.isPresent());
     }
 
     @Test
-    public void saveWithExistEmploee() {
-        var emploee = new Emploee(null, "613450000001", "Даниил", "Андрианов", null, null );
+    public void saveWithNullParamsEmploee() {
+        var emploee = new Emploee(null, 613450000001L, "Даниил", "Андрианов", null, null );
 
         var resSave = repo.save(emploee);
-
         assertTrue(resSave.isEmpty());
     }
 
@@ -74,7 +72,7 @@ public class EmploeeRepositoryTest {
 
     @Test
     public void noFindById() {
-        var resSave = repo.findById("613450000011");
+        var resSave = repo.findById("100");
         assertTrue(resSave.isEmpty());
     }
 
