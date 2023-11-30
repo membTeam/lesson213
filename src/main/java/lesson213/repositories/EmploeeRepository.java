@@ -1,24 +1,30 @@
 package lesson213.repositories;
 
-import lesson213.Emploee;
+import lesson213.models.Emploee;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface EmploeeRepository {
 
-    void clearAll();
-
     Optional<Emploee> save(Emploee emploee);
-    Optional<Integer> maxSalary();
-    Optional<Integer> minSalary();
-    Optional<Integer> sumSalary();
     Optional<List<Emploee>> findAll();
-
+    Optional<List<Emploee>> listEmploeeForDepartment(int department);
+    Optional<Emploee> findByINN(Long valINN);
     Optional<Emploee> findById(String id);
-    Optional<Integer> maxSalary(int department);
-    Optional<Integer> sumSalary(int department);
     Optional<List<Emploee>> findAll(int department);
-    Optional<Integer> MinSalary(int department);
+
+    void clearAll();
+    int size();
+
+    int minSalary();
+    int sumSalary();
+    boolean existEmploee(Long inn, String firstName, String lastName);
+    boolean existEmploee(Emploee emploee);
+
+    int maxSalary(int department);
+    int maxSalary();
+    int sumSalary(int department);
+    int minSalary(int department);
 
 }
