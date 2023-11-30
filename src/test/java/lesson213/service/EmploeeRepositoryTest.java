@@ -1,8 +1,11 @@
 package lesson213.service;
 
+import lesson213.exceptionAPI.ErrNotDataException;
 import lesson213.models.Emploee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static lesson213.service.ParamsForTesting.department;
 import static org.junit.jupiter.api.Assertions.*;
 
 import lesson213.repositories.EmploeeRepositoryImpl;
@@ -80,9 +83,7 @@ public class EmploeeRepositoryTest {
                 "Даниил",
                 "Андрианов", null, null );
 
-        var resSave = repo.save(emploee);
-
-        assertTrue(resSave.isEmpty());
+        assertThrows(ErrNotDataException.class, () -> repo.save(emploee));
     }
 
     @Test
@@ -123,7 +124,6 @@ public class EmploeeRepositoryTest {
 
     @Test
     public void maxSalaryForDepartment() {
-        var department = 1;
         var max = repo.getMap().values().stream()
                 .filter(emploee -> emploee.getDepartment() == department)
                 .mapToInt(emploee -> emploee.getSalary())

@@ -6,17 +6,26 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class EmploeeRepositoryImpl implements  EmploeeRepository {
+
+    private Map<String,Emploee> repo = new HashMap<>();
+    private Stream<Emploee> streamEmploee = repo.values().stream();
+    private ErrNotDataException errNotDataException = new ErrNotDataException("Нет данных");
+
+
     private static final Long MINNUMINN = 613450000001L;
     private Long getINN() {
         if (repo.values().size() == 0) {
             return MINNUMINN;
         }
 
-        var lsEmploee = repo.values().stream().collect(Collectors.toList());
-        var max = lsEmploee.stream().mapToLong(emploee -> emploee.getDataINN()).max().orElseThrow();
+        //repo.values().stream()
+        var max = streamEmploee
+                .mapToLong(emploee -> emploee.getDataINN())
+                .max().orElseThrow();
 
         if (max < 613450000001L) {
             throw new ErrNotDataException("ИНН не верный формат");
@@ -24,7 +33,6 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
 
         return  (max / 1000 + 1) * 1000 + 1;
     }
-    private Map<String,Emploee> repo = new HashMap<>();
 
     // ---------------------------------------------------
 
@@ -35,7 +43,7 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
     @Override
     public Optional<List<Emploee>> listEmploeeForDepartment(int department) {
         return Optional.ofNullable(
-                repo.values().stream()
+                streamEmploee
                         .filter(emploee -> emploee.getDepartment()==department)
                         .collect(Collectors.toList())
         );
@@ -55,7 +63,9 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
         if (emploee.getId() == null) {
             return false;
         } else {
-            return existEmploee(emploee.getDataINN(), emploee.getFirstName(), emploee.getLastName());
+            return existEmploee(emploee.getDataINN(),
+                    emploee.getFirstName(),
+                    emploee.getLastName());
         }
     }
 
@@ -70,18 +80,15 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
     }
 
     @Override
-    public Optional<Emploee> save (Emploee emploee) {
-
-        if (existEmploee(emploee)) {
-            return Optional.empty();
-        }
+    public Optional<Emploee> save(Emploee emploee) {
 
         if (emploee.getId() == null) {
             if (emploee.getDepartment() == null ||
                     emploee.getSalary() == null ||
-                    emploee.getFirstName() == null ||
-                    emploee.getLastName() == null) {
-                return Optional.empty();
+                    emploee.getFirstName().isBlank() ||
+                    emploee.getLastName().isBlank()) {
+
+                throw new ErrNotDataException("Проверьте заполнение полей");
             }
 
             emploee.setId(UUID.randomUUID().toString());
@@ -90,8 +97,11 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
             }
 
             repo.put(emploee.getId(), emploee);
-        } else {
+
+        } else if (existEmploee(emploee)) {
             repo.put(emploee.getId(), emploee);
+        } else {
+            return Optional.empty();
         }
 
         return Optional.ofNullable(emploee);
@@ -99,11 +109,12 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
 
     @Override
     public Optional<Emploee> findByINN(Long valINN) {
-        var item = repo.values().stream()
+        var item = streamEmploee
                 .filter(emploee -> emploee.getDataINN().equals(valINN))
                 .collect(Collectors.toList());
+
         if (item.size() > 0) {
-            return Optional.of(item.get(0));
+            return Optional.ofNullable(item.get(0));
         } else {
             return Optional.empty();
         }
@@ -111,53 +122,52 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
 
     @Override
     public Optional<Emploee> findById(String id) {
-        var item = repo.values()
-                .stream()
+        var item = streamEmploee
                 .filter(emploee -> emploee.getId().equals(id)).collect(Collectors.toList());
 
-        return item.size() > 0 ? Optional.of(item.get(0)) : Optional.empty();
+        return item.size() > 0 ? Optional.ofNullable(item.get(0)) : Optional.empty();
     }
 
     @Override
     public int maxSalary() {
-        return repo.values().stream()
+        return streamEmploee
                 .mapToInt(emploee -> emploee.getSalary())
-                .max().orElseThrow();
+                .max().orElseThrow(()-> errNotDataException);
     }
 
     @Override
     public int maxSalary(int department) {
 
-        return repo.values().stream()
+        return streamEmploee
                 .filter(emploee -> emploee.getDepartment() == department)
                 .mapToInt(emploee -> emploee.getSalary())
-                .max().orElseThrow();
+                .max().orElseThrow(()-> errNotDataException);
     }
 
     @Override
     public int minSalary() {
-        return repo.values().stream()
+        return streamEmploee
                 .mapToInt(emploee -> emploee.getSalary())
-                .min().orElseThrow();
+                .min().orElseThrow(()-> errNotDataException);
     }
     @Override
     public int minSalary(int department) {
-        return repo.values().stream()
+        return streamEmploee
                 .filter(emploee -> emploee.getDepartment() == department)
                 .mapToInt(emploee -> emploee.getSalary())
-                .min().orElseThrow();
+                .min().orElseThrow(()-> errNotDataException);
     }
 
     @Override
     public int sumSalary() {
-        return repo.values().stream()
+        return streamEmploee
                 .mapToInt(emploee -> emploee.getSalary())
                 .sum();
     }
 
     @Override
     public int sumSalary(int department) {
-        return repo.values().stream()
+        return streamEmploee
                 .filter(emploee -> emploee.getDepartment() == department)
                 .mapToInt(emploee -> emploee.getSalary())
                 .sum();
