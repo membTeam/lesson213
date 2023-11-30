@@ -1,5 +1,6 @@
 package lesson213.repositories;
 
+import lesson213.exceptionAPI.ErrNotDataException;
 import lesson213.models.Emploee;
 import org.springframework.stereotype.Repository;
 
@@ -8,24 +9,27 @@ import java.util.stream.Collectors;
 
 @Repository
 public class EmploeeRepositoryImpl implements  EmploeeRepository {
-    private static  int numINN = 50000;
+    private static final Long MINNUMINN = 613450000001L;
     private Long getINN() {
+        if (repo.values().size() == 0) {
+            return MINNUMINN;
+        }
+
         var lsEmploee = repo.values().stream().collect(Collectors.toList());
-        var max = getMaxINN(lsEmploee);
+        var max = lsEmploee.stream().mapToLong(emploee -> emploee.getDataINN()).max().orElseThrow();
 
-        max = (max / 1000 + 1) * 1000 + 1;
+        if (max < 613450000001L) {
+            throw new ErrNotDataException("ИНН не верный формат");
+        }
 
-        //var strLong = "6134" + numINN++ + "001";
-        //Long.parseLong(strLong);
-
-        return max;
+        return  (max / 1000 + 1) * 1000 + 1;
     }
     private Map<String,Emploee> repo = new HashMap<>();
 
     // ---------------------------------------------------
 
-    private static Long getMaxINN(List<Emploee> lsEmploee) {
-        return lsEmploee.stream().mapToLong(emploee -> emploee.getDataINN()).max().orElseThrow();
+    public Map<String,Emploee> getMap() {
+        return repo;
     }
 
     @Override

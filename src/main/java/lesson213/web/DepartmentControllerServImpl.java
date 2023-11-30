@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 
 @Service
-//@RequiredArgsConstructor
 public class DepartmentControllerServImpl implements DepartmentControllerServ {
 
     private final EmploeeRepositoryImpl repo;
