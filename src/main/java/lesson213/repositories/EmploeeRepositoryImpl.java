@@ -89,6 +89,18 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
     }
 
     @Override
+    public Optional<Emploee> findByINN(Long valINN) {
+        var item = repo.values().stream()
+                .filter(emploee -> emploee.getDataINN().equals(valINN))
+                .collect(Collectors.toList());
+        if (item.size() > 0) {
+            return Optional.of(item.get(0));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Optional<Emploee> findById(String id) {
         var item = repo.values()
                 .stream()

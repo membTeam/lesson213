@@ -3,6 +3,7 @@ package lesson213.services;
 
 import lesson213.models.Emploee;
 import lesson213.repositories.EmploeeRepositoryImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -11,13 +12,10 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 @Service
+@RequiredArgsConstructor
 public class ConfigLoadData implements CommandLineRunner {
 
-    private EmploeeRepositoryImpl repo;
-
-    public ConfigLoadData(EmploeeRepositoryImpl repo) {
-        this.repo = repo;
-    }
+    private final EmploeeRepositoryImpl repo;
 
     @Override
     public void run(String... args) {
