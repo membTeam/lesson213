@@ -21,10 +21,14 @@ public class DepartmentControllerServImpl implements DepartmentControllerServ {
     }
 
     @Override
+    public int size() {
+        return repo.size();
+    }
+
+    @Override
     public List<Emploee> listEmploeeForDepartment(Integer department) {
-        return  repo.findAll().orElseThrow()
-                .stream().filter(emploee -> emploee.getDepartment() == department)
-                .collect(Collectors.toList());
+        return repo.listEmploeeForDepartment(department)
+                .orElseThrow(()->{throw new ErrNotDataException("Нет данных в этом подразделении");});
     }
 
     @Override

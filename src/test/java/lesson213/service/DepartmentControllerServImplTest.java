@@ -1,64 +1,110 @@
 package lesson213.service;
 
+import lesson213.exceptionAPI.ErrNotDataException;
 import lesson213.models.Emploee;
 import lesson213.repositories.EmploeeRepositoryImpl;
+import lesson213.web.DepartmentControllerServImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DepartmentControllerServImplTest {
-    EmploeeRepositoryImpl emploeeRepo = new EmploeeRepositoryImpl();
+
+    @Mock
+    private EmploeeRepositoryImpl emploeeRepo;
+
+    @InjectMocks
+    private DepartmentControllerServImpl contrServ;
+
+    private int departmentForList = 1;
+    private List<Emploee> lsEmploee = new ArrayList<>(
+            List.of(
+                    new Emploee("100", 613450000001L, "Николай", "Иванов", departmentForList, 50000),
+                    new Emploee("101", 613450001001L, "Петр", "Иванов", departmentForList, 90000)
+            )
+    );
 
     @BeforeEach
     private void setUp() {
-        Map<String,Emploee> repo = emploeeRepo.getMap();
-        repo.clear();
-
-        List<Emploee> lsEmploee = List.of(
-                new Emploee("100", 613450000001L, "Николай", "Иванов", 1, 50000),
-                new Emploee("101", 613450001001L, "Петр", "Иванов", 1, 90000),
-                new Emploee("102", 613450002001L, "Кирилл", "Иванов", 2, 60000),
-                new Emploee("103", 613450003001L, "Василий", "Иванов", 2, 60000)
-        );
-
-        lsEmploee.stream().forEach(emploee -> repo.put(emploee.getId(), emploee));
+        initMocks(this);
     }
 
     @Test
     public void getSize() {
-        var repo = emploeeRepo.getMap();
-        assertTrue(repo.size() == 4);
+        var size = 3;
+        when(emploeeRepo.size()).thenReturn(size);
+
+        var sizeRes = contrServ.size();
+
+        assertTrue( sizeRes > 0);
+        assertEquals(size, sizeRes);
     }
 
     @Test
-    public void existEmploee() {
-        var emploee = new Emploee("100", 613450000001L, "Николай", "Иванов", 1, 50000);
+    public void listEmploeeForDepartment() {
+        var department = 1;
+        when(emploeeRepo.listEmploeeForDepartment(department))
+                .thenReturn(Optional.ofNullable(lsEmploee));
+        when(emploeeRepo.size()).thenReturn(2);
 
-        var result = emploeeRepo.existEmploee(emploee);
-        assertTrue(result);
+        var resServ = contrServ.listEmploeeForDepartment(department);
+
+        assertEquals(emploeeRepo.size(), resServ.size());
     }
 
     @Test
-    public void notExistEmploee() {
-        var emploee = new Emploee("100", 613450000002L, "Николай", "Иванов", 1, 50000);
+    public void sumSalaryForDepartment() {
+        var department = 1;
+        var sumSalary = 90000;
+        when(emploeeRepo.sumSalary(department)).thenReturn(sumSalary);
 
-        var result = emploeeRepo.existEmploee(emploee);
-        assertFalse(result);
+        var resServ = contrServ.sumSalaryForDepartment(department);
+
+        assertEquals(sumSalary, resServ);
     }
 
     @Test
-    public void ExistEmploeeWithParams() {
-        var emploee = new Emploee("100", 613450000001L, "Николай", "Иванов", 1, 50000);
+    public void maxSalaryForDepartment() {
+        var department = 1;
+        var maxSalary = 65000;
+        when(emploeeRepo.maxSalary(department)).thenReturn(maxSalary);
 
-        var result = emploeeRepo.existEmploee(emploee.getDataINN(), emploee.getFirstName(), emploee.getLastName());
-        assertTrue(result);
+        var resServ = contrServ.maxSalaryForDepartment(department);
+
+        assertEquals(maxSalary, resServ);
+    }
+
+    @Test
+    public void minSalaryForDepartment() {
+        var department = 1;
+        var minSalary = 50000;
+        when(emploeeRepo.minSalary(department)).thenReturn(minSalary);
+
+        var resServ = contrServ.minSalaryForDepartment(department);
+
+        assertEquals(minSalary, resServ);
+    }
+
+    @Test
+    public void listEmploeeGr() {
+
+        when(emploeeRepo.findAll()).thenReturn(Optional.ofNullable(lsEmploee));
+        var resMap = lsEmploee.stream().collect(Collectors.groupingBy(emploee -> emploee.getDepartment()));
+
+        var resServ = contrServ.listEmploeeGr();
+
+        assertEquals(resMap, resServ);
     }
 
 }

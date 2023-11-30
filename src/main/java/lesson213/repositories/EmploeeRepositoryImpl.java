@@ -33,6 +33,15 @@ public class EmploeeRepositoryImpl implements  EmploeeRepository {
     }
 
     @Override
+    public Optional<List<Emploee>> listEmploeeForDepartment(int department) {
+        return Optional.ofNullable(
+                repo.values().stream()
+                        .filter(emploee -> emploee.getDepartment()==department)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @Override
     public boolean existEmploee(Long inn, String firstName, String lastName) {
         return repo.values().stream()
                 .filter(emploee -> (emploee.getDataINN().equals(inn) &&

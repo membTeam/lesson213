@@ -19,6 +19,8 @@ public interface EmploeeRepository {
     boolean existEmploee(Long inn, String firstName, String lastName);
     boolean existEmploee(Emploee emploee);
 
+    Optional<List<Emploee>> listEmploeeForDepartment(int department);
+
     Optional<Emploee> findByINN(Long valINN);
     Optional<Emploee> findById(String id);
     int maxSalary(int department);

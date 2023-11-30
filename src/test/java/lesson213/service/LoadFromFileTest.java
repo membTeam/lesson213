@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LoadFromFileTest {
 
-    EmploeeRepositoryImpl repo = new EmploeeRepositoryImpl();
-
     @Test
     public void ConfigLoadDataRun() {
+        var repo = new EmploeeRepositoryImpl();
         var configLoadData = new ConfigLoadData(repo);
+
         configLoadData.run();
 
         assertTrue(repo.size()>0);

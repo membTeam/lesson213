@@ -10,6 +10,7 @@ import lesson213.models.Emploee;
 public interface DepartmentControllerServ {
 
     List<Emploee> listEmploeeForDepartment(Integer department);
+    int size();
     int sumSalaryForDepartment(Integer department);
     int maxSalaryForDepartment(Integer department);
     int minSalaryForDepartment(Integer department);
